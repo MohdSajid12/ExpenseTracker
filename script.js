@@ -20,15 +20,21 @@ btnsubmit.addEventListener('click',(e)=>{
         phonenumber:phonenumber,
         pwd:pwd
     };
-
-
-
-
-
+    
     axios
       .post("http://localhost:8400/register",obj)
       .then((result) => {
         console.log(result);
+
+        if(result.data.suc==true)
+        {
+          alert("signup successfull")
+        }
+        else{
+          if(result.data.errors[0].message=='phonenumber must be unique'||'email must be unique'){
+            alert("user already exist!")
+          }
+        }
       })
       .catch((err) => {
         console.log(err);
