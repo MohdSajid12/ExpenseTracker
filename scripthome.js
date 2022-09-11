@@ -11,6 +11,10 @@ let ifempty=document.querySelector('.ifempty');
 let logout=document.querySelector('#logout');
 let dropshow=document.querySelector('#dropshow');
 let subscriptionbtn=document.querySelector('#buysub');
+let hidedrop = document.querySelector("#hidedrop");
+let body = document.querySelector("body");
+let subfeature = document.querySelector(".subfeatures");
+let whitetheme=document.querySelector('#whitetheme');
 addexpensebtn.addEventListener('click',(e)=>{
     let token = localStorage.getItem("token");
 
@@ -56,7 +60,7 @@ axios.get("http://localhost:8400/getuserdata",{ headers: {"authorization" : toke
 
 if(result.data.suc=='yes'){
 
-    userdeatail.innerHTML = result.data.result[0].name.split(" ")[0];
+  userdeatail.innerHTML = result.data.result[0].name.split(" ")[0];
 
 }
 
@@ -88,7 +92,7 @@ function getallexpenses(){
         <span class="gprice">${res.amount}</span>
         <span class="gcategory">${res.category}</span>
         <span class="gdescription">${res.description}</span>
-        <button id=${res.id} style="background-color:red; float:right; color:white; border:none; padding:6px; margin-top:-8px;"><i class="fa-solid fa-trash"></i></button>
+        <button id=${res.id} style="background-color:green; float:right; color:white; border:none; padding:6px; margin-top:-8px;">Delete<i class="fa-solid fa-trash"></i></button>
         </div>
         `;
         }
@@ -103,7 +107,7 @@ function getallexpenses(){
 function AlertItem(e) {
   const notification = document.createElement("div");
   notification.classList.add("notification");
-  notification.innerHTML = `<h5> your expense stored </h5>`;
+  notification.innerHTML = `<h5>Congrats!Your Expense Added</h5>`;
   alertpopup.appendChild(notification);
   setTimeout(() => {
     notification.remove();
@@ -113,7 +117,7 @@ function AlertItem(e) {
 function alertempty(e) {
   const notification = document.createElement("div");
   notification.classList.add("alertempty");
-  notification.innerHTML = `<h6> please enter all the feilds </h6>`;
+  notification.innerHTML = `<h6> Please Fill All The Fields </h6>`;
   alertpopup.appendChild(notification);
   setTimeout(() => {
     notification.remove();
@@ -122,7 +126,7 @@ function alertempty(e) {
 
 logout.addEventListener('click',()=>{
 
-  let result=  confirm("do you want to logout ");
+  let result=  confirm("Are You Sure !");
   if(result){
     localStorage.clear();
     location.replace('login.html')
@@ -130,15 +134,42 @@ logout.addEventListener('click',()=>{
 
 });
 
-let body=document.querySelector('body');
+
 dropshow.addEventListener('click',(e)=>{ 
 dropoptions.style.display='block';
 });
-dropshow.addEventListener('dblclick',()=>{
-dropoptions.style.display = "none";
-
+hidedrop.addEventListener("click", () => {
+  dropoptions.style.display = "none";
 });
+document.addEventListener("DOMContentLoaded", () => {
+  let token = localStorage.getItem("token");
 
+  axios
+    .get("http://localhost:8400/getuserdata", {
+      headers: { authorization: token },
+    })
+    .then((result) => {
+      if (result.data.result[0].issubcribed == true) {
+        subfeature.innerHTML = `
+     <li class="text-dark" id="subscriptiontheme" >Change Theme</li>
+                  <li><a href="board.html" id="leaderboard">See Leaderboard</a></li>
+             <li><a href="
+             report.html" id="report"></a></li>`;
+
+        let subscriptiontheme = document.querySelector("#subscriptiontheme");
+        let leaderboard = document.querySelector("#leaderboard");
+        let report = document.querySelector("#report");
+
+        subscriptiontheme.addEventListener("click", () => {
+          body.style.backgroundColor='green';
+        });
+
+      }
+    })
+    .then((err) => {
+      console.log(err);
+    });
+  });
 
 subscriptionbtn.addEventListener('click', buySubscription);
 
@@ -175,10 +206,10 @@ async function buySubscription(e){
                 { headers: { authorization: token } }
               )
               .then(() => {
-                alert("Now You are a Premium User ");
+                alert("You are a Premium User Now");
               })
               .catch(() => {
-                alert("Something went wrong. Try Again!");
+                alert("Something went wrong. Try Again!!!");
               });
           },
         };
@@ -199,3 +230,25 @@ async function buySubscription(e){
     });
 
   }
+
+
+
+  expensedetails.addEventListener('click',(e)=>{
+    let token=localStorage.getItem('token');
+
+    if(e.target.classList.contains('fa-trash')){
+      let id = e.target.parentElement.id;
+      axios.delete(
+          `http://localhost:8400/delete/expense/${id}
+`,
+          { headers: { authorization: token } }
+        )
+        .then((result) => {
+          getallexpenses();
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+console.log(e.target.parentElement.id);
+    }
+  })

@@ -60,7 +60,7 @@ router.get("/subscription", aut.authenticate, async (req, res) => {
       key_id: 'rzp_test_uT8rTIcrpwJuem',
       key_secret: 'kRlfIeJfV2nwHRLvCrppk9zb',
     });
-    const amount = 3000;
+    const amount = 500;
 
     rzp.orders.create({ amount, currency: "INR" }, (err, order) => {
       if (err) {
@@ -108,7 +108,41 @@ router.post("/updatetransaction", aut.authenticate, async (req, res) => {
   }
 });
 
+router.get("/leaderdata", aut.authenticate, async (req, res) => {
+  const totalAmount = await Expense.findAll({
+    attributes: [
+      "userId",
+      [Sequelize.fn("sum", Sequelize.col("amount")), "total_amount"],
+    ],
+    group: ["userId"],
+    raw: true,
+  });
+
+  totalAmount.sort((a, b) => b.total_amount - a.total_amount);
+
+  for (let i = 0; i < totalAmount.length; i++) {
+    let user = await User.findAll({
+      attributes: ["name"],
+      where: { id: totalAmount[i].userId },
+    });
+
+    //console.log(user[0].name)
+
+    totalAmount[i] = { ...totalAmount[i], name: user[0].name };
+  }
+
+  //console.log(totalAmount)
+  res.json( totalAmount);
+});
 
 
+router.delete('/delete/expense/:id',aut.authenticate,(req,res)=>{
+  const id=req.params.id;
+  Expense.destroy({where:{id:id}})
+  .then(result=>{
+res.json(result)  })
+  .catch(err=>{
+res.json(err)  })
+});
 
 module.exports=router;

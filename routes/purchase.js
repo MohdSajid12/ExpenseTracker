@@ -14,7 +14,7 @@ try {
       key_id: rzp_test_uT8rTIcrpwJuem,
       key_secret: kRlfIeJfV2nwHRLvCrppk9zb,
   });
-  const amount = 3000;
+  const amount = 500;
 
   rzp.orders.create({ amount, currency: "INR" }, (err, order) => {
     if (err) {
