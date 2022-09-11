@@ -5,7 +5,7 @@ exports.authenticate = (req, res, next) => {
   try {
     const token = req.header("authorization");
 
-    const Id = jwt.verify(token, process.env.TOKEN_SECRET);
+    const Id = jwt.verify(token, 'sajid1234567890');
    // console.log(TOKEN_SECRET)
     console.log(Id)
     User.findByPk(Id)
@@ -15,10 +15,13 @@ exports.authenticate = (req, res, next) => {
         next();
       })
       .catch((err) => {
-        throw new Error(err);
+       // throw new Error(err);
+       res.status(401).json({message:"unauthorized login again"})
+
       });
   } catch (err) {
-    console.log(err);
-    res.status(404).JSON({ success: false });
+    //console.log(err);
+   // res.status(404).JSON({ success: false });
+   res.status(404).json({success :false,message:"not able to authorized!login again"})
   }
 };
