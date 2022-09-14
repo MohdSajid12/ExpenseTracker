@@ -1,0 +1,24 @@
+.mainbar{
+    background-color: rebeccapurple;
+    display:flow-root;
+    padding: 11px;
+}
+*{
+    margin: 0px;
+    padding: 0px;
+}
+#home{
+    color: white;
+    text-decoration: none;
+    margin-left: 40%;
+}
+
+.dailyexpense{
+    margin-bottom: 80px;
+}
+.weeklyexpense{
+    margin-bottom: 180px;
+}
+.text-center_text-success_mt-4{
+    background-color: blue;
+}
